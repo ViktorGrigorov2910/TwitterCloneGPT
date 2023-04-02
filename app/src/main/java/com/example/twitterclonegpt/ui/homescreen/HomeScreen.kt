@@ -5,6 +5,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.twitterclonegpt.R
 
 // TODO: Remove when have messages
@@ -13,10 +14,10 @@ const val TEST_TEXT =
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     Scaffold(
         topBar = { AppBar() },
-        bottomBar = { BottomNavigationBar() }
+        bottomBar = { BottomNavigationBar(navController) }
     ) { HomeScreenContent() }
 }
 
@@ -41,5 +42,5 @@ fun getTrendingNow(): List<TrendingItemModel> {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+//    HomeScreen()
 }
