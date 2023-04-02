@@ -1,4 +1,4 @@
-package com.example.twitterclonegpt
+package com.example.twitterclonegpt.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -15,7 +15,9 @@ import com.example.twitterclonegpt.ui.homescreen.HomeScreen
 import com.example.twitterclonegpt.ui.messeges.ChatScreen
 import com.example.twitterclonegpt.ui.settings.SettingsScreen
 import com.example.twitterclonegpt.ui.theme.TwitterCloneTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TwitterCloneActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
