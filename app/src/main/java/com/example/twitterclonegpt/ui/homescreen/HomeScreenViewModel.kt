@@ -1,6 +1,5 @@
 package com.example.twitterclonegpt.ui.homescreen
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,15 +13,15 @@ import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor() : ViewModel() {
-    private val getTrendingPostsUseCase: GetTrendingPostsUseCase = GetTrendingPostsUseCase()
+class HomeScreenViewModel @Inject constructor(
+    private val getTrendingPostsUseCase: GetTrendingPostsUseCase,
+) : ViewModel() {
 
     private val _trendingPostsState = MutableLiveData<TrendingPostState>()
     val trendingPostsState: LiveData<TrendingPostState> = _trendingPostsState
     lateinit var cache: List<TrendingPost>
 
     init {
-        Log.i("Testing" , "In ViewModel")
         fetchTrendingPosts()
     }
 
