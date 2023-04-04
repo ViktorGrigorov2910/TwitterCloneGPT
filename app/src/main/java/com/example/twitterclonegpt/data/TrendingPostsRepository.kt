@@ -6,10 +6,11 @@ import com.example.twitterclonegpt.domain.DataResult
 import com.example.twitterclonegpt.domain.asDataResult
 import com.example.twitterclonegpt.domain.trending_posts.TrendingPost
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class TrendingPostsRepository {
+class TrendingPostsRepository @Inject constructor() : TrendingPostsRepositoryContract {
 
-    suspend fun getTrendingPosts(): DataResult<List<TrendingPost>> = asDataResult {
+    override suspend fun getTrendingPosts(): DataResult<List<TrendingPost>> = asDataResult {
         delay(3000L)
         dummyTrendingPosts
     }

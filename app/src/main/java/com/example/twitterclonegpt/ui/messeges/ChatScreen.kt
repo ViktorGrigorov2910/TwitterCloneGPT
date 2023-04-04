@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.example.twitterclonegpt.R
 import com.example.twitterclonegpt.ui.theme.White
 
+//TODO: change whole screen
 @Composable
 fun ChatScreen() {
     Column(
@@ -29,6 +30,7 @@ fun ChatScreen() {
     }
 }
 
+//TODO: Extract to repo/ constant for now
 @Composable
 fun ChatContent() {
     Column(
@@ -36,17 +38,17 @@ fun ChatContent() {
             .wrapContentHeight()
             .padding(top = 16.dp)
     ) {
-        ChatMessage("Hello!")
-        ChatMessage("How are you?")
-        ChatMessage("I'm fine, thanks.")
-        ChatMessage("How about you?")
-        ChatMessage("I'm doing great, thanks!")
-        ChatMessage("Glad to hear that.")
+        ChatMessageView("Hello!")
+        ChatMessageView("How are you?")
+        ChatMessageView("I'm fine, thanks.")
+        ChatMessageView("How about you?")
+        ChatMessageView("I'm doing great, thanks!")
+        ChatMessageView("Glad to hear that.")
     }
 }
 
 @Composable
-fun ChatMessage(text: String) {
+fun ChatMessageView(text: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,6 +87,7 @@ fun ChatMessage(text: String) {
     }
 }
 
+// TODO: Rework
 @Composable
 fun ChatInput() {
     Row(
