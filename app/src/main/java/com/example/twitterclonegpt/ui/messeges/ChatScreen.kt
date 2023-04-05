@@ -2,7 +2,6 @@ package com.example.twitterclonegpt.ui.messeges
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,6 +9,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -21,44 +21,44 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.twitterclonegpt.R
 import com.example.twitterclonegpt.ui.theme.Black
-import com.example.twitterclonegpt.ui.theme.White
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.example.twitterclonegpt.ui.utils.ShowError
+import com.example.twitterclonegpt.ui.utils.ShowLoading
 import kotlinx.coroutines.launch
 
-//TODO: Create repo and usecases for messages
-val chatMessages = listOf(
-    ChatMessage("Alice"),
-    ChatMessage("ggadsg"),
-    ChatMessage("fasasfafas"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("bvcbvcbbcvb"),
-    ChatMessage("cczxczvxcvxcv"),
-    ChatMessage("kuyujyjyuyyujk")
-)
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ChatScreen() {
+    val viewModel: ChatScreenViewModel = hiltViewModel()
+    Scaffold { ChatScreenContent(viewModel) }
+}
+
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun ChatScreenContent(viewModel: ChatScreenViewModel) {
     val messages = remember { mutableStateListOf<ChatMessage>() }
-    messages.addAll(chatMessages)
+    val chatMessagesState = viewModel.chatMessagesState.observeAsState()
+
+    when (val state = chatMessagesState.value) {
+        is ChatScreenViewModel.ChatMessagesState.Failure -> state.exception.message?.let {
+            ShowError(
+                message = it
+            )
+        }
+        //TODO: Check why loading is not visible
+        is ChatScreenViewModel.ChatMessagesState.Loading -> ShowLoading(true)
+        is ChatScreenViewModel.ChatMessagesState.Success -> {
+            messages.addAll(state.chatMessages)
+        }
+        else -> {}
+    }
     Scaffold(
         bottomBar = {
-            ChatInput(messages)
+            ChatInput(messages, viewModel)
             Spacer(modifier = Modifier.height(120.dp))
         }
     ) {
@@ -69,10 +69,10 @@ fun ChatScreen() {
         }
     }
 }
-@Composable
-fun ChatInput(messages: SnapshotStateList<ChatMessage>) {
-    val newMessage = remember { mutableStateOf("") }
 
+@Composable
+fun ChatInput(messages: SnapshotStateList<ChatMessage>, viewModel: ChatScreenViewModel) {
+    val newMessage = remember { mutableStateOf("") }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,7 +85,7 @@ fun ChatInput(messages: SnapshotStateList<ChatMessage>) {
                 .padding(end = 8.dp),
             value = newMessage.value,
             onValueChange = { value -> newMessage.value = value },
-            placeholder = { Text("What's happening?") },
+            placeholder = { Text("Hello....") },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
                 cursorColor = Black,
@@ -99,6 +99,8 @@ fun ChatInput(messages: SnapshotStateList<ChatMessage>) {
             onClick = {
                 if (newMessage.value.isNotBlank()) {
                     val message = ChatMessage(newMessage.value)
+                    //TODO: observe if added
+                    viewModel.addMessage(message)
                     messages.add(messages.size, message)
                     newMessage.value = ""
                 }
@@ -108,8 +110,9 @@ fun ChatInput(messages: SnapshotStateList<ChatMessage>) {
                 backgroundColor = Black
             )
         ) {
+            //TODO: Change this to icon with arrow for "send"
             Text(
-                text = "Tweet",
+                text = "Send",
                 style = TextStyle(
                     color = Color.White,
                     fontWeight = FontWeight.Bold
@@ -133,7 +136,7 @@ fun ChatContent(chatMessages: List<ChatMessage>) {
 
     LaunchedEffect(chatMessages.size) {
         coroutineScope.launch {
-            listState.scrollToItem(chatMessages.size - 1)
+            listState.scrollToItem(chatMessages.size)
         }
     }
 

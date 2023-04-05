@@ -1,5 +1,7 @@
 package com.example.twitterclonegpt.di
 
+import com.example.twitterclonegpt.data.ChatRepository
+import com.example.twitterclonegpt.data.ChatRepositoryContract
 import com.example.twitterclonegpt.data.TrendingPostsRepository
 import com.example.twitterclonegpt.data.TrendingPostsRepositoryContract
 import dagger.Module
@@ -14,7 +16,11 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideSomeRepository(repository: TrendingPostsRepository): TrendingPostsRepositoryContract = repository
+    fun provideTrendingPostsRepository(repository: TrendingPostsRepository): TrendingPostsRepositoryContract = repository
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(repository: ChatRepository): ChatRepositoryContract = repository
 
 
     // TODO: Uncomment when you need to make calls for random images
