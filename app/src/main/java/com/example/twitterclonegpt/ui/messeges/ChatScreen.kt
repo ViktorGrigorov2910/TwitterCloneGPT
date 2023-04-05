@@ -1,54 +1,146 @@
 package com.example.twitterclonegpt.ui.messeges
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import com.example.twitterclonegpt.R
+import com.example.twitterclonegpt.ui.theme.Black
 import com.example.twitterclonegpt.ui.theme.White
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-//TODO: change whole screen
+//TODO: Create repo and usecases for messages
+val chatMessages = listOf(
+    ChatMessage("Alice"),
+    ChatMessage("ggadsg"),
+    ChatMessage("fasasfafas"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("bvcbvcbbcvb"),
+    ChatMessage("cczxczvxcvxcv"),
+    ChatMessage("kuyujyjyuyyujk")
+)
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ChatScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = White)
+    val messages = remember { mutableStateListOf<ChatMessage>() }
+    messages.addAll(chatMessages)
+    Scaffold(
+        bottomBar = {
+            ChatInput(messages)
+            Spacer(modifier = Modifier.height(120.dp))
+        }
     ) {
-        ChatContent()
-        ChatInput()
+        Box(
+            modifier = Modifier.fillMaxSize(0.8f)
+        ) {
+            ChatContent(messages)
+        }
+    }
+}
+@Composable
+fun ChatInput(messages: SnapshotStateList<ChatMessage>) {
+    val newMessage = remember { mutableStateOf("") }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = CenterVertically
+    ) {
+        TextField(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp),
+            value = newMessage.value,
+            onValueChange = { value -> newMessage.value = value },
+            placeholder = { Text("What's happening?") },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.Transparent,
+                cursorColor = Black,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            shape = RoundedCornerShape(16.dp)
+        )
+
+        Button(
+            onClick = {
+                if (newMessage.value.isNotBlank()) {
+                    val message = ChatMessage(newMessage.value)
+                    messages.add(messages.size, message)
+                    newMessage.value = ""
+                }
+            },
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Black
+            )
+        ) {
+            Text(
+                text = "Tweet",
+                style = TextStyle(
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
     }
 }
 
-//TODO: Extract to repo/ constant for now
+
 @Composable
-fun ChatContent() {
-    Column(
-        modifier = Modifier
-            .wrapContentHeight()
-            .padding(top = 16.dp)
-    ) {
-        ChatMessageView("Hello!")
-        ChatMessageView("How are you?")
-        ChatMessageView("I'm fine, thanks.")
-        ChatMessageView("How about you?")
-        ChatMessageView("I'm doing great, thanks!")
-        ChatMessageView("Glad to hear that.")
+fun ChatContent(chatMessages: List<ChatMessage>) {
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    LazyColumn(state = listState) {
+        items(chatMessages) { chatMessage ->
+            ChatMessageView(chatMessage)
+        }
     }
+
+    LaunchedEffect(chatMessages.size) {
+        coroutineScope.launch {
+            listState.scrollToItem(chatMessages.size - 1)
+        }
+    }
+
 }
 
 @Composable
-fun ChatMessageView(text: String) {
+fun ChatMessageView(message: ChatMessage) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,7 +150,8 @@ fun ChatMessageView(text: String) {
             color = Color(0xffe0e0e0),
             shape = RoundedCornerShape(16.dp),
             elevation = 1.dp,
-            modifier = Modifier.size(36.dp)
+            modifier = Modifier
+                .size(36.dp)
                 .align(CenterVertically)
         ) {
             Image(
@@ -78,7 +171,7 @@ fun ChatMessageView(text: String) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = text,
+                text = message.message,
                 fontSize = 14.sp,
                 color = Color.Black,
                 modifier = Modifier.padding(16.dp)
@@ -87,29 +180,3 @@ fun ChatMessageView(text: String) {
     }
 }
 
-// TODO: Rework
-@Composable
-fun ChatInput() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
-        verticalAlignment = CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.twitter_icon_black),
-            contentDescription = "Emoji Icon",
-            modifier = Modifier
-                .size(24.dp)
-                .align(CenterVertically)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        OutlinedTextField(
-            value = "",
-            onValueChange = {},
-            placeholder = { Text(text = "Type a message...") },
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
