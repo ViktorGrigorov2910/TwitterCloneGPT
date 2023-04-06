@@ -28,8 +28,8 @@ class ChatScreenViewModel @Inject constructor(
 
     private fun getChatMessages() {
         viewModelScope.launch {
-            delay(2000L)
             _chatMessagesState.value = ChatMessagesState.Loading
+            delay(2000L)
 
             when (val result = getChatMessagesUseCase.execute(Unit)) {
                 is DataResult.Failure -> _chatMessagesState.value =

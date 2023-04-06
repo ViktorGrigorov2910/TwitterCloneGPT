@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.twitterclonegpt.R
 import com.example.twitterclonegpt.domain.trending_posts.TrendingPost
+import com.example.twitterclonegpt.ui.messeges.ChatScreenViewModel
 import com.example.twitterclonegpt.ui.utils.ShowError
 import com.example.twitterclonegpt.ui.utils.ShowLoading
 
@@ -47,22 +48,19 @@ fun HomeScreenContent(viewModel: HomeScreenViewModel) = Column(
         fontSize = 18.sp
     )
 
+    ShowLoading(isLoading = trendingPostsState.value is HomeScreenViewModel.TrendingPostState.Loading)
 
     when (val state = trendingPostsState.value) {
         is HomeScreenViewModel.TrendingPostState.Success -> {
-            LazyColumn  {
+            LazyColumn {
                 items(state.trendingPosts) { item ->
                     postsListState.value = state.trendingPosts
                     TrendingItem(item = item)
                 }
             }
         }
-        is HomeScreenViewModel.TrendingPostState.Failure -> {
-            state.exception.message?.let { ShowError(message = it) }
-        }
-        is HomeScreenViewModel.TrendingPostState.Loading -> {
-            ShowLoading(true)
-        }
+        is HomeScreenViewModel.TrendingPostState.Failure -> { state.exception.message?.let { ShowError(message = it) } }
+        is HomeScreenViewModel.TrendingPostState.Loading -> Unit
         else -> {}
     }
 }
