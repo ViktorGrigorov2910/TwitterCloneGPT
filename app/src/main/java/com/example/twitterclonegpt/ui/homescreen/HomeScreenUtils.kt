@@ -56,6 +56,7 @@ fun HomeScreenContent(viewModel: HomeScreenViewModel) = Column(
 
     when (val state = trendingPostsState.value) {
         is HomeScreenViewModel.TrendingPostState.Success -> {
+            Spacer(modifier = Modifier.height(8.dp))
             LazyColumn {
                 items(state.trendingPosts) { item ->
                     postsListState.value = state.trendingPosts
@@ -71,68 +72,70 @@ fun HomeScreenContent(viewModel: HomeScreenViewModel) = Column(
     }
 }
 
+//TODO: Fix icon placement , the other thins look good
+//TODO: Add icons from retweet, share, like , comment
 @Composable
 fun TrendingItem(item: TrendingPost) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-
+    Column {
         Divider(
             color = Color.Black,
-            thickness = 0.7.dp,
+            thickness = 0.2.dp,)
+        Box(
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(top = 4.dp)
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth(0.9f)
+                .background(Color.White)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.twitter_icon_black),
-                contentDescription = "Profile Image",
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                alignment = Alignment.CenterStart
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = "@" + item.username,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Column {
+                    Spacer(modifier = Modifier.width(16.dp))
 
-                Spacer(modifier = Modifier.height(4.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.twitter_icon_black),
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(RoundedCornerShape(12.dp)),
+                        alignment = Alignment.CenterStart
+                    )
+                }
 
-                Text(
-                    text = item.textContent,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = "@" + item.username,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = item.textContent,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 12.sp,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
 
+
         Divider(
             color = Color.Black,
-            thickness = 0.7.dp,
+            thickness = 0.2.dp,
             modifier = Modifier
-                .align(Alignment.BottomStart)
                 .padding(top = 4.dp)
         )
     }
