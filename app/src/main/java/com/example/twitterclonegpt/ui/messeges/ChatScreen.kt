@@ -1,13 +1,16 @@
 package com.example.twitterclonegpt.ui.messeges
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -23,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.twitterclonegpt.R
+import com.example.twitterclonegpt.ui.homescreen.HomeScreenViewModel
 import com.example.twitterclonegpt.ui.theme.Black
 import com.example.twitterclonegpt.ui.utils.ShowError
 import com.example.twitterclonegpt.ui.utils.ShowLoading
@@ -39,18 +43,21 @@ fun ChatScreen() {
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ChatScreenContent(viewModel: ChatScreenViewModel) {
+fun ChatScreenContent(viewModel: ChatScreenViewModel) = Column(
+    modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .fillMaxWidth(1f),
+    horizontalAlignment = Alignment.CenterHorizontally
+
+) {
     val messages = remember { mutableStateListOf<ChatMessage>() }
     val chatMessagesState = viewModel.chatMessagesState.observeAsState()
 
+    ShowLoading(isLoading = chatMessagesState.value is ChatScreenViewModel.ChatMessagesState.Loading)
+
     when (val state = chatMessagesState.value) {
-        is ChatScreenViewModel.ChatMessagesState.Failure -> state.exception.message?.let {
-            ShowError(
-                message = it
-            )
-        }
-        //TODO: Check why loading is not visible
-        is ChatScreenViewModel.ChatMessagesState.Loading -> ShowLoading(true)
+        is ChatScreenViewModel.ChatMessagesState.Loading -> Unit
         is ChatScreenViewModel.ChatMessagesState.Success -> {
             messages.addAll(state.chatMessages)
         }
@@ -59,7 +66,7 @@ fun ChatScreenContent(viewModel: ChatScreenViewModel) {
     Scaffold(
         bottomBar = {
             ChatInput(messages, viewModel)
-            Spacer(modifier = Modifier.height(120.dp))
+            Spacer(modifier = Modifier.height(116.dp))
         }
     ) {
         Box(
@@ -75,49 +82,61 @@ fun ChatInput(messages: SnapshotStateList<ChatMessage>, viewModel: ChatScreenVie
     val newMessage = remember { mutableStateOf("") }
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalAlignment = CenterVertically
+            .height(50.dp),
+        verticalAlignment = CenterVertically,
     ) {
-        TextField(
+        Surface(
             modifier = Modifier
-                .weight(1f)
-                .padding(end = 8.dp),
-            value = newMessage.value,
-            onValueChange = { value -> newMessage.value = value },
-            placeholder = { Text("Hello....") },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                cursorColor = Black,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(16.dp)
-        )
-
-        Button(
-            onClick = {
-                if (newMessage.value.isNotBlank()) {
-                    val message = ChatMessage(newMessage.value)
-                    //TODO: observe if added
-                    viewModel.addMessage(message)
-                    messages.add(messages.size, message)
-                    newMessage.value = ""
-                }
-            },
+                .fillMaxWidth()
+                .wrapContentHeight(),
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Black
+            border = BorderStroke(
+                width = 1.dp,
+                color = Black
             )
         ) {
-            //TODO: Change this to icon with arrow for "send"
-            Text(
-                text = "Send",
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
+            Row(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth(),
+                verticalAlignment = CenterVertically
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .weight(1f),
+                    value = newMessage.value,
+                    onValueChange = { value -> newMessage.value = value },
+                    placeholder = { Text("Hello....") },
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        cursorColor = Black,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(16.dp)
                 )
-            )
+
+                Button(
+                    onClick = {
+                        if (newMessage.value.isNotBlank()) {
+                            val message = ChatMessage(newMessage.value)
+                            //TODO: observe if added
+//                        viewModel.addMessage(message)
+                            messages.add(messages.size, message)
+                            newMessage.value = ""
+                        }
+                    },
+                    shape = androidx.compose.foundation.shape.CircleShape,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Black
+                    ),
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_send),
+                        contentDescription = "Send Button"
+                    )
+                }
+            }
         }
     }
 }
@@ -139,7 +158,6 @@ fun ChatContent(chatMessages: List<ChatMessage>) {
             listState.scrollToItem(chatMessages.size)
         }
     }
-
 }
 
 @Composable
