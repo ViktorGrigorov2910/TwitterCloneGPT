@@ -67,7 +67,7 @@ fun ProfileImage() {
     }
 }
 
-//The tweet(text + username)
+//The tweet(text + username + post's actions (aka like/retweet/share))
 @Composable
 fun PostContent(post: TrendingPost) {
     Column(
@@ -93,7 +93,7 @@ fun PostContent(post: TrendingPost) {
         )
 
 
-        //Add retweet,like,share
+        ActionStrip(likeCount = post.likeCount, retweetCount = post.retweetCount)
     }
 }
 
