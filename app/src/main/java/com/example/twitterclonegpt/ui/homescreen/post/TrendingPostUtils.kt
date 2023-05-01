@@ -23,9 +23,9 @@ import com.example.twitterclonegpt.domain.trending_posts.TrendingPost
 @Composable
 fun TrendingItem(item: TrendingPost) {
     Column {
-        CustomDivider()
+        Divider(color = Color.Black, thickness = 0.2.dp)
         ContentBox(post = item)
-        CustomDivider(modifier = Modifier.padding(top = 4.dp))
+        Divider(color = Color.Black, thickness = 0.2.dp, modifier = Modifier.padding(top = 4.dp))
     }
 }
 
@@ -92,16 +92,6 @@ fun PostContent(post: TrendingPost) {
             overflow = TextOverflow.Ellipsis
         )
 
-
         ActionStrip(likeCount = post.likeCount, retweetCount = post.retweetCount)
     }
-}
-
-@Composable
-fun CustomDivider(modifier: Modifier = Modifier) {
-    Divider(
-        color = Color.Black,
-        thickness = 0.2.dp,
-        modifier = modifier
-    )
 }
