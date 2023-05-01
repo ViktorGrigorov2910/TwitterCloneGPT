@@ -29,9 +29,8 @@ class TwitterCloneActivity : ComponentActivity() {
                     topBar = { AppBar() },
                     bottomBar = { BottomNavigationBar(navController) }
                 ) {
-                    NavHost(navController, startDestination = Screen.Splash.route) {
+                    NavHost(navController, startDestination = Screen.Home.route) {
                         //TODO: make the splash not contain the topbar and navbar
-                        composable(Screen.Splash.route) { AnimatedSplashScreen(navController)}
                         composable(Screen.Home.route) { HomeScreen() }
                         composable(Screen.Messages.route) { ChatScreen() }
                         composable(Screen.Settings.route) { SettingsScreen() }
