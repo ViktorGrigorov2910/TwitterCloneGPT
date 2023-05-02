@@ -1,9 +1,10 @@
 package com.example.twitterclonegpt.domain.trending_posts
 
 data class TrendingPost(
+    val id: Int,
     val textContent: String,
     val userImage: Int,
     val username: String,
-    val likeCount: Int,
+    var likeCount: Int,
     val retweetCount: Int,
 )
