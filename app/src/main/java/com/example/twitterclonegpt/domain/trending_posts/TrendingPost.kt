@@ -6,5 +6,5 @@ data class TrendingPost(
     val userImage: Int,
     val username: String,
     var likeCount: Int,
-    val retweetCount: Int,
+    var retweetCount: Int,
 )

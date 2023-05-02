@@ -8,6 +8,8 @@ interface TrendingPostsRepositoryContract {
 
     suspend fun likePost(postId: Int): DataResult<Unit>
 
+    suspend fun retweetPost(postId: Int): DataResult<Unit>
+
 
 
 }

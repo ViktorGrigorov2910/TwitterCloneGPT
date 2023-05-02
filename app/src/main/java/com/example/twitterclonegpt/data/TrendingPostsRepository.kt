@@ -17,6 +17,8 @@ class TrendingPostsRepository @Inject constructor() : TrendingPostsRepositoryCon
 
     override suspend fun likePost(postId: Int): DataResult<Unit> = asDataResult { dummyTrendingPosts.find { it.id == postId }.also { it?.likeCount = it?.likeCount!! + 1 } }
 
+    override suspend fun retweetPost(postId: Int): DataResult<Unit> = asDataResult {dummyTrendingPosts.find { it.id == postId }.also { it?.retweetCount = it?.retweetCount!! + 1 }  }
+
 }
 
 
